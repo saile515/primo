@@ -9,6 +9,7 @@
 
 
 enum TokenType {
+	EndOfFile,
 	KeywordFunc,
 	Identifier,
 	LiteralInt,
@@ -116,6 +117,13 @@ std::vector<Token> tokenize(std::istream& stream) {
 		}
 
 		throw std::format("Error: Unexpected character '{}'.", stream_parser.get());
+	}
+
+	{
+		Token token;
+		token.type = TokenType::EndOfFile;
+
+		result.push_back(token);
 	}
 
 	return result;
