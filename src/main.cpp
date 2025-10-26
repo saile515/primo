@@ -1,14 +1,16 @@
 #include <fstream>
 #include <print>
 
+#include "ast.hpp"
 #include "tokenize.hpp"
 
-int main() {
-	std::ifstream file_stream("./input.code");
+int main(int argc, char **argv)
+{
+    std::ifstream file_stream(argv[1]);
 
-	std::vector<Token> tokens = tokenize(file_stream);
+    TokenList tokens = tokenize(file_stream);
 
-	for (Token token : tokens) {
-		std::print("{}", (int)token.type);
-	}
+    std::unique_ptr<ast::Program> program = ast::parse(tokens);
+
+    std::print("{}", program->codegen());
 }
