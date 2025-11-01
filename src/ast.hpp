@@ -1,6 +1,7 @@
 #pragma once
 
 #include "token_list.hpp"
+#include "llvm/IR/DerivedTypes.h"
 #include <memory>
 #include <string>
 #include <vector>
@@ -11,7 +12,7 @@ namespace ast
 class Node
 {
   public:
-    virtual std::string codegen();
+    virtual llvm::Value *codegen();
 };
 
 class Expression : public Node
@@ -32,7 +33,7 @@ class Identifier : public Expression
     {
     }
 
-    std::string codegen() override;
+    virtual llvm::Value *codegen();
 };
 
 class StringLiteral : public Expression
@@ -45,7 +46,7 @@ class StringLiteral : public Expression
     {
     }
 
-    std::string codegen() override;
+    virtual llvm::Value *codegen();
 };
 
 class CallExpression : public Expression
@@ -59,7 +60,7 @@ class CallExpression : public Expression
                    std::vector<std::unique_ptr<Expression>> arguments)
         : m_callee(std::move(callee)), m_arguments(std::move(arguments)) {};
 
-    std::string codegen() override;
+    virtual llvm::Value *codegen();
 };
 
 class ExpressionStatement : public Statement
@@ -71,7 +72,7 @@ class ExpressionStatement : public Statement
     ExpressionStatement(std::unique_ptr<Expression> expression)
         : m_expression(std::move(expression)) {};
 
-    std::string codegen() override;
+    virtual llvm::Value *codegen();
 };
 
 class BlockStatement : public Statement
@@ -85,7 +86,7 @@ class BlockStatement : public Statement
     {
     }
 
-    std::string codegen() override;
+    virtual llvm::Value *codegen();
 };
 
 class FunctionDeclaration : public Statement
@@ -102,7 +103,7 @@ class FunctionDeclaration : public Statement
     {
     }
 
-    std::string codegen() override;
+    virtual llvm::Value *codegen();
 };
 
 class Program : public Node
@@ -115,7 +116,7 @@ class Program : public Node
     {
     }
 
-    std::string codegen() override;
+    virtual llvm::Value *codegen();
 };
 
 std::unique_ptr<Program> parse(TokenList &tokens);

@@ -10,18 +10,25 @@ std::unique_ptr<FunctionDeclaration> parse_function_declaration(TokenList &token
 {
     std::string name = tokens.at(1)->value.value();
 
-    std::vector<std::string> parameters{};
-
     int parameter_end =
         tokens.find_matching_token(2, TokenType::BracketRoundOpen, TokenType::BracketRoundClose);
+
+    std::vector<TokenList> parameter_tokens =
+        TokenList(tokens.begin() + 3, tokens.begin() + parameter_end).split(TokenType::Comma);
+
+    std::vector<std::string> parameters{};
+
+    for (auto &token_list : parameter_tokens)
+    {
+        parameters.push_back(token_list.at(0)->value.value());
+    }
 
     int body_end = tokens.find_matching_token(parameter_end + 1, TokenType::BracketCurlyOpen,
                                               TokenType::BracketCurlyClose);
 
     TokenList body_tokens(tokens.begin() + parameter_end + 2, tokens.begin() + body_end);
 
-    return std::make_unique<FunctionDeclaration>(name, std::vector<std::string>{},
-                                                 parse_block(body_tokens));
+    return std::make_unique<FunctionDeclaration>(name, parameters, parse_block(body_tokens));
 }
 
 std::unique_ptr<CallExpression> parse_call_expression(TokenList &tokens)

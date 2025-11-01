@@ -1,5 +1,4 @@
 #include <fstream>
-#include <print>
 
 #include "ast.hpp"
 #include "tokenize.hpp"
@@ -12,5 +11,5 @@ int main(int argc, char **argv)
 
     std::unique_ptr<ast::Program> program = ast::parse(tokens);
 
-    std::print("{}", program->codegen());
+    llvm::Value *program_ir = program->codegen();
 }

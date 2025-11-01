@@ -1,83 +1,219 @@
 #include "ast.hpp"
 
-#include <sstream>
+#include "llvm/ADT/StringRef.h"
+#include "llvm/IR/BasicBlock.h"
+#include "llvm/IR/DerivedTypes.h"
+#include "llvm/IR/Function.h"
+#include "llvm/IR/IRBuilder.h"
+#include "llvm/IR/LLVMContext.h"
+#include "llvm/IR/Module.h"
+#include "llvm/IR/Type.h"
+#include "llvm/IR/Verifier.h"
+#include "llvm/IR/Instructions.h"
+#include "llvm/IR/LegacyPassManager.h"
+#include "llvm/MC/TargetRegistry.h"
+#include "llvm/Support/FileSystem.h"
+#include "llvm/Support/TargetSelect.h"
+#include "llvm/Support/raw_ostream.h"
+#include "llvm/Target/TargetMachine.h"
+#include "llvm/Target/TargetOptions.h"
+#include "llvm/TargetParser/Host.h"
+#include <map>
+#include <stdexcept>
 
 namespace ast
 {
 
-std::string Node::codegen()
+static std::unique_ptr<llvm::LLVMContext> context;
+static std::unique_ptr<llvm::IRBuilder<>> builder;
+static std::unique_ptr<llvm::Module> module;
+static std::map<std::string, llvm::Value *> named_values;
+
+llvm::Value *Node::codegen()
 {
-    return "";
+    throw "Error: Node::codegen should only be called through sub-classes.";
 }
 
-std::string Identifier::codegen()
+llvm::Value *Identifier::codegen()
 {
-    return m_name;
-}
+    auto it = named_values.find(m_name);
 
-std::string StringLiteral::codegen()
-{
-    return '"' + m_value + '"';
-}
-
-std::string CallExpression::codegen()
-{
-    std::stringstream result_stream;
-
-    result_stream << m_callee->codegen();
-
-    result_stream << '(';
-
-    for (auto &argument : m_arguments)
+    if (it == named_values.end())
     {
-        result_stream << argument->codegen();
+        std::string msg = "Unknown identifier: " + m_name;
+        throw std::runtime_error(msg);
     }
 
-    result_stream << ')';
-
-    return result_stream.str();
+    return it->second;
 }
 
-std::string ExpressionStatement::codegen()
+llvm::Value *StringLiteral::codegen()
+{
+    return builder->CreateGlobalString(m_value);
+}
+
+llvm::Value *CallExpression::codegen()
+{
+    llvm::Value *callee_val = m_callee->codegen();
+    if (!callee_val)
+        throw std::runtime_error("CallExpression: callee codegen returned null.");
+
+    llvm::Function *callee_func = llvm::dyn_cast<llvm::Function>(callee_val);
+    if (!callee_func)
+        throw std::runtime_error("CallExpression: callee is not a function.");
+
+    std::vector<llvm::Value *> args_v;
+    args_v.reserve(m_arguments.size());
+    for (auto &arg : m_arguments)
+    {
+        llvm::Value *v = arg->codegen();
+        if (!v)
+            throw std::runtime_error("CallExpression: argument codegen returned null.");
+        args_v.push_back(v);
+    }
+
+    return builder->CreateCall(callee_func, llvm::ArrayRef<llvm::Value *>(args_v));
+}
+
+llvm::Value *ExpressionStatement::codegen()
 {
     return m_expression->codegen();
 }
 
-std::string BlockStatement::codegen()
+llvm::Value *BlockStatement::codegen()
 {
-    std::stringstream result_stream;
-
-    for (auto &statement : m_statements)
+    llvm::Value *last = nullptr;
+    for (auto &stmt : m_statements)
     {
-        result_stream << statement->codegen() << ';';
+        last = stmt->codegen();
     }
-
-    return result_stream.str();
+    return last;
 }
 
-std::string FunctionDeclaration::codegen()
+llvm::Value *FunctionDeclaration::codegen()
 {
-    std::stringstream result_stream;
+    if (!context || !builder || !module)
+        throw std::runtime_error(
+            "FunctionDeclaration::codegen called before Program::codegen initialised LLVM.");
 
-    result_stream << "func " << m_name << '(';
-
-    for (auto &parameter : m_parameters)
+    std::vector<llvm::Type *> param_types;
+    param_types.reserve(m_parameters.size());
+    for (size_t i = 0; i < m_parameters.size(); ++i)
     {
-        result_stream << parameter;
+        param_types.push_back(llvm::PointerType::getUnqual(*context));
+    }
 
-        if (parameter != *m_parameters.end())
+    llvm::FunctionType *ft =
+        llvm::FunctionType::get(llvm::Type::getVoidTy(*context), param_types, false);
+    llvm::Function *function =
+        llvm::Function::Create(ft, llvm::Function::ExternalLinkage, m_name, module.get());
+
+    if (named_values.find(m_name) != named_values.end())
+    {
+        throw "Error: Function defined twice.";
+    }
+
+    named_values[m_name] = function;
+
+    {
+        unsigned idx = 0;
+        for (auto &arg : function->args())
         {
-            result_stream << ',';
+            if (idx < m_parameters.size())
+            {
+                arg.setName(m_parameters[idx]);
+                auto pit = named_values.find(m_parameters[idx]);
+                llvm::Value *old_param_binding = nullptr;
+                if (pit != named_values.end())
+                    old_param_binding = pit->second;
+
+                named_values[m_parameters[idx]] = &arg;
+            }
+            ++idx;
         }
     }
 
-    result_stream << ") {" << m_body->codegen() << '}';
+    llvm::BasicBlock *bb = llvm::BasicBlock::Create(*context, "entry", function);
+    builder->SetInsertPoint(bb);
 
-    return result_stream.str();
+    if (m_body)
+    {
+        m_body->codegen();
+    }
+
+    if (!bb->getTerminator())
+    {
+        builder->CreateRetVoid();
+    }
+
+    std::string verify_err;
+    llvm::raw_string_ostream rso(verify_err);
+    if (llvm::verifyFunction(*function, &rso))
+    {
+        for (auto &pname : m_parameters)
+        {
+            named_values.erase(pname);
+        }
+        named_values.erase(m_name);
+
+        rso.flush();
+        throw std::runtime_error("Function verification failed: " + verify_err);
+    }
+
+    for (auto &pname : m_parameters)
+    {
+        named_values.erase(pname);
+    }
+
+    return function;
 }
 
-std::string Program::codegen()
+llvm::Value *Program::codegen()
 {
-    return m_block->codegen();
+    context = std::make_unique<llvm::LLVMContext>();
+    builder = std::make_unique<llvm::IRBuilder<>>(*context);
+    module = std::make_unique<llvm::Module>("ast_module", *context);
+
+    named_values.clear();
+
+    if (m_block)
+    {
+        m_block->codegen();
+    }
+
+	llvm::Triple targetTriple(llvm::sys::getDefaultTargetTriple());
+
+	llvm::InitializeAllTargetInfos();
+	llvm::InitializeAllTargets();
+	llvm::InitializeAllTargetMCs();
+	llvm::InitializeAllAsmParsers();
+	llvm::InitializeAllAsmPrinters();
+
+	std::string error;
+	auto target = llvm::TargetRegistry::lookupTarget(targetTriple, error);
+
+	auto cpu = "generic";
+	auto features = "";
+	
+	llvm::TargetOptions opt;
+	auto targetMachine = target->createTargetMachine(targetTriple, cpu, features, opt, llvm::Reloc::PIC_);
+
+	module->setDataLayout(targetMachine->createDataLayout());
+	module->setTargetTriple(targetTriple);
+
+	auto Filename = "output.s";
+	std::error_code EC;
+	llvm::raw_fd_ostream dest(Filename, EC, llvm::sys::fs::OF_None);
+
+	llvm::legacy::PassManager pass;
+	auto FileType = llvm::CodeGenFileType::AssemblyFile;
+
+	targetMachine->addPassesToEmitFile(pass, dest, nullptr, FileType);
+
+	pass.run(*module);
+	dest.flush();
+
+    return nullptr;
 }
+
 } // namespace ast

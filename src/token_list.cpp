@@ -79,7 +79,7 @@ std::vector<TokenList> TokenList::split(TokenType seperator)
             i++;
         }
 
-        result.push_back(TokenList(begin() + start, begin() + i - 1));
+        result.push_back(TokenList(begin() + start, begin() + i));
 
         i++;
     }
