@@ -1,7 +1,3 @@
-func print(value) {
-	"Test";
-};
-
 func main() {
-	print("Hello world");
+	printf("Hello world");
 };

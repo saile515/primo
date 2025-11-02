@@ -176,6 +176,13 @@ llvm::Value *Program::codegen()
 
     named_values.clear();
 
+	llvm::FunctionType *printfTy = llvm::FunctionType::get(builder->getInt32Ty(),
+                                               { llvm::PointerType::getUnqual(*context) }, true);
+	llvm::Function* printfFunc = 
+        llvm::Function::Create(printfTy, llvm::Function::ExternalLinkage, "printf", module.get());
+
+	named_values["printf"] = printfFunc;
+
     if (m_block)
     {
         m_block->codegen();
