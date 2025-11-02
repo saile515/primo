@@ -1,5 +1,14 @@
 #include "ast.hpp"
 
+#include "./ast/block_statement.hpp"
+#include "./ast/call_expression.hpp"
+#include "./ast/expression.hpp"
+#include "./ast/expression_statement.hpp"
+#include "./ast/function_decleration.hpp"
+#include "./ast/identifier.hpp"
+#include "./ast/string_literal.hpp"
+#include <memory>
+
 namespace ast
 {
 

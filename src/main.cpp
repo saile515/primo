@@ -11,5 +11,5 @@ int main(int argc, char **argv)
 
     std::unique_ptr<ast::Program> program = ast::parse(tokens);
 
-    llvm::Value *program_ir = program->codegen();
+    program->codegen();
 }

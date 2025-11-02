@@ -1,4 +1,4 @@
-	.file	"ast_module"
+	.file	"program"
 	.text
 	.globl	main
 	.p2align	4
@@ -20,7 +20,7 @@ main:
 	.type	.L__unnamed_1,@object
 	.section	.rodata.str1.1,"aMS",@progbits,1
 .L__unnamed_1:
-	.asciz	"Hello world\\n"
-	.size	.L__unnamed_1, 14
+	.asciz	"Hello world"
+	.size	.L__unnamed_1, 12
 
 	.section	".note.GNU-stack","",@progbits
