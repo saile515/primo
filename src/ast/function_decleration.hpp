@@ -1,9 +1,10 @@
 #pragma once
 
-#include "./statement.hpp"
 #include "./block_statement.hpp"
+#include "./statement.hpp"
 
-namespace ast {
+namespace primo::ast
+{
 
 class FunctionDeclaration : public Statement
 {
@@ -19,7 +20,7 @@ class FunctionDeclaration : public Statement
     {
     }
 
-    virtual llvm::Value *codegen(IRContext& context);
+    virtual llvm::Value *codegen(IRContext &context);
 };
 
-}
+} // namespace primo::ast

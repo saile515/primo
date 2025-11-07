@@ -2,6 +2,9 @@
 
 #include <sstream>
 
+namespace primo
+{
+
 StreamParser::StreamParser(std::istream &stream) : _stream(stream)
 {
 }
@@ -88,3 +91,5 @@ bool StreamParser::is_at_end()
 {
     return peek() == EOF;
 }
+
+} // namespace primo

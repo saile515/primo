@@ -4,7 +4,7 @@
 #include "llvm/IR/DerivedTypes.h"
 #include <llvm/IR/IRBuilder.h>
 
-namespace ast
+namespace primo::ast
 {
 
 struct IRContext
@@ -21,4 +21,4 @@ class Node
     virtual llvm::Value *codegen(IRContext &context);
 };
 
-} // namespace ast
+} // namespace primo::ast

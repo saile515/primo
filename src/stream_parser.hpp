@@ -3,6 +3,9 @@
 #include <istream>
 #include <string>
 
+namespace primo
+{
+
 class StreamParser
 {
   private:
@@ -23,3 +26,5 @@ class StreamParser
 
     bool is_at_end();
 };
+
+} // namespace primo

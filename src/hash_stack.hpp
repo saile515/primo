@@ -4,6 +4,9 @@
 #include <unordered_map>
 #include <vector>
 
+namespace primo
+{
+
 template <typename K, typename T> class HashStack
 {
   private:
@@ -50,3 +53,5 @@ template <typename K, typename T> class HashStack
         return m_map.contains(key) && m_map[key].size() > 0;
     }
 };
+
+} // namespace primo

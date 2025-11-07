@@ -3,9 +3,9 @@
 #include "./ast/program.hpp"
 #include "token_list.hpp"
 
-namespace ast
+namespace primo::ast
 {
 
 std::unique_ptr<Program> parse(TokenList &tokens);
 
-}; // namespace ast
+}; // namespace primo::ast

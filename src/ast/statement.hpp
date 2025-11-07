@@ -2,10 +2,11 @@
 
 #include "./node.hpp"
 
-namespace ast {
+namespace primo::ast
+{
 
 class Statement : public Node
 {
 };
 
-}
+} // namespace primo::ast

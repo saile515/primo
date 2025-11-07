@@ -1,9 +1,10 @@
 #pragma once
 
-#include "./node.hpp"
 #include "./block_statement.hpp"
+#include "./node.hpp"
 
-namespace ast {
+namespace primo::ast
+{
 
 class Program : public Node
 {
@@ -15,8 +16,8 @@ class Program : public Node
     {
     }
 
-    virtual llvm::Value *codegen(IRContext& context);
+    virtual llvm::Value *codegen(IRContext &context);
     void codegen();
 };
 
-}
+} // namespace primo::ast

@@ -7,9 +7,9 @@ int main(int argc, char **argv)
 {
     std::ifstream file_stream(argv[1]);
 
-    TokenList tokens = tokenize(file_stream);
+    primo::TokenList tokens = primo::tokenize(file_stream);
 
-    std::unique_ptr<ast::Program> program = ast::parse(tokens);
+    std::unique_ptr<primo::ast::Program> program = primo::ast::parse(tokens);
 
     program->codegen();
 }

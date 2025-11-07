@@ -3,7 +3,7 @@
 #include "../log.hpp"
 #include <llvm/IR/Verifier.h>
 
-namespace ast
+namespace primo::ast
 {
 
 llvm::Value *FunctionDeclaration::codegen(IRContext &context)
@@ -68,4 +68,4 @@ llvm::Value *FunctionDeclaration::codegen(IRContext &context)
     return function;
 }
 
-} // namespace ast
+} // namespace primo::ast

@@ -3,7 +3,8 @@
 #include "./expression.hpp"
 #include <string>
 
-namespace ast {
+namespace primo::ast
+{
 
 class Identifier : public Expression
 {
@@ -15,7 +16,7 @@ class Identifier : public Expression
     {
     }
 
-    virtual llvm::Value *codegen(IRContext& context);
+    virtual llvm::Value *codegen(IRContext &context);
 };
 
-}
+} // namespace primo::ast

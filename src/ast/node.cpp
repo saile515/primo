@@ -2,7 +2,7 @@
 
 #include "../log.hpp"
 
-namespace ast
+namespace primo::ast
 {
 
 llvm::Value *Node::codegen(IRContext &context)
@@ -11,4 +11,4 @@ llvm::Value *Node::codegen(IRContext &context)
     return nullptr;
 }
 
-} // namespace ast
+} // namespace primo::ast

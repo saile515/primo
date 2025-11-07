@@ -1,6 +1,6 @@
 #include "./block_statement.hpp"
 
-namespace ast
+namespace primo::ast
 {
 
 llvm::Value *BlockStatement::codegen(IRContext &context)
@@ -15,4 +15,4 @@ llvm::Value *BlockStatement::codegen(IRContext &context)
     return last;
 }
 
-} // namespace ast
+} // namespace primo::ast

@@ -1,6 +1,8 @@
 cmake_minimum_required(VERSION 3.28)
 
-project(lexer LANGUAGES CXX)
+set(PROJECT_NAME "primo")
+
+project(${PROJECT_NAME} LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 23)
 
@@ -10,6 +12,6 @@ endif()
 
 file(GLOB_RECURSE source_files src/*.cpp)
 
-add_executable(lexer ${source_files})
+add_executable(${PROJECT_NAME} ${source_files})
 
-target_link_libraries(lexer LLVM)
+target_link_libraries(${PROJECT_NAME} LLVM)

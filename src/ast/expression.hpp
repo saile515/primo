@@ -2,11 +2,11 @@
 
 #include "./node.hpp"
 
-namespace ast
+namespace primo::ast
 {
 
 class Expression : public Node
 {
 };
 
-} // namespace ast
+} // namespace primo::ast

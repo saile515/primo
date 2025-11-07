@@ -3,7 +3,7 @@
 #include "../log.hpp"
 #include <llvm/IR/Function.h>
 
-namespace ast
+namespace primo::ast
 {
 
 llvm::Value *CallExpression::codegen(IRContext &context)
@@ -40,4 +40,4 @@ llvm::Value *CallExpression::codegen(IRContext &context)
     return context.builder->CreateCall(callee_function, llvm::ArrayRef<llvm::Value *>(arguments));
 }
 
-} // namespace ast
+} // namespace primo::ast

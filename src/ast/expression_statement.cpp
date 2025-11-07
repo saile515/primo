@@ -1,6 +1,6 @@
 #include "./expression_statement.hpp"
 
-namespace ast
+namespace primo::ast
 {
 
 llvm::Value *ExpressionStatement::codegen(IRContext &context)
@@ -8,4 +8,4 @@ llvm::Value *ExpressionStatement::codegen(IRContext &context)
     return m_expression->codegen(context);
 }
 
-} // namespace ast
+} // namespace primo::ast

@@ -3,6 +3,9 @@
 #include "stream_parser.hpp"
 #include <unordered_map>
 
+namespace primo
+{
+
 static const std::unordered_map<std::string, TokenType> keyword_lookup = {
     {"func", TokenType::KeywordFunc}};
 
@@ -109,3 +112,5 @@ TokenList tokenize(std::istream &stream)
 
     return result;
 }
+
+} // namespace primo

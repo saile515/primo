@@ -1,10 +1,11 @@
 #pragma once
 
 #include "./statement.hpp"
-#include <vector>
 #include <memory>
+#include <vector>
 
-namespace ast {
+namespace primo::ast
+{
 
 class BlockStatement : public Statement
 {
@@ -17,7 +18,7 @@ class BlockStatement : public Statement
     {
     }
 
-    virtual llvm::Value *codegen(IRContext& context);
+    virtual llvm::Value *codegen(IRContext &context);
 };
 
-}
+} // namespace primo::ast

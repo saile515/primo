@@ -2,7 +2,8 @@
 
 #include "./expression.hpp"
 
-namespace ast {
+namespace primo::ast
+{
 
 class StringLiteral : public Expression
 {
@@ -14,7 +15,7 @@ class StringLiteral : public Expression
     {
     }
 
-    virtual llvm::Value *codegen(IRContext& context);
+    virtual llvm::Value *codegen(IRContext &context);
 };
 
-}
+} // namespace primo::ast

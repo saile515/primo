@@ -1,5 +1,8 @@
 #include "token_list.hpp"
 
+namespace primo
+{
+
 bool Token::is_bracket()
 {
     return type == TokenType::BracketRoundOpen || type == TokenType::BracketRoundClose ||
@@ -124,3 +127,5 @@ std::vector<TokenList> TokenList::split_statements(TokenType seperator)
 
     return result;
 }
+
+} // namespace primo

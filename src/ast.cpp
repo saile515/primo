@@ -9,7 +9,7 @@
 #include "./ast/string_literal.hpp"
 #include <memory>
 
-namespace ast
+namespace primo::ast
 {
 
 std::unique_ptr<BlockStatement> parse_block(TokenList &tokens);
@@ -114,4 +114,4 @@ std::unique_ptr<Program> parse(TokenList &tokens)
     return std::make_unique<Program>(std::move(program_block));
 }
 
-}; // namespace ast
+}; // namespace primo::ast

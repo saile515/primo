@@ -4,6 +4,9 @@
 #include <optional>
 #include <vector>
 
+namespace primo
+{
+
 enum TokenType
 {
     EndOfFile,
@@ -48,3 +51,5 @@ class TokenList : public std::vector<std::shared_ptr<Token>>
 
     std::vector<TokenList> split_statements(TokenType seperator);
 };
+
+} // namespace primo

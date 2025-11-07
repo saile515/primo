@@ -3,7 +3,7 @@
 #include "./expression.hpp"
 #include "./statement.hpp"
 
-namespace ast
+namespace primo::ast
 {
 
 class ExpressionStatement : public Statement
@@ -18,4 +18,4 @@ class ExpressionStatement : public Statement
     virtual llvm::Value *codegen(IRContext &context);
 };
 
-} // namespace ast
+} // namespace primo::ast

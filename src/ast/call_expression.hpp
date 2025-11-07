@@ -2,7 +2,8 @@
 
 #include "./expression.hpp"
 
-namespace ast {
+namespace primo::ast
+{
 
 class CallExpression : public Expression
 {
@@ -15,7 +16,7 @@ class CallExpression : public Expression
                    std::vector<std::unique_ptr<Expression>> arguments)
         : m_callee(std::move(callee)), m_arguments(std::move(arguments)) {};
 
-    virtual llvm::Value *codegen(IRContext& context);
+    virtual llvm::Value *codegen(IRContext &context);
 };
 
-}
+} // namespace primo::ast

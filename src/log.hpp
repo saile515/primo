@@ -4,6 +4,9 @@
 #include <format>
 #include <print>
 
+namespace primo
+{
+
 static void info(std::string message)
 {
     std::print("\033[0;37mINFO: {}\033[0m\n", message);
@@ -34,3 +37,5 @@ template <class... Args> static void error(std::format_string<Args...> format, A
 {
     error(std::format(format, args...));
 }
+
+} // namespace primo

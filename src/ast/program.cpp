@@ -20,7 +20,7 @@
 #include "llvm/Target/TargetOptions.h"
 #include "llvm/TargetParser/Host.h"
 
-namespace ast
+namespace primo::ast
 {
 
 void add_libc_function(IRContext &context, std::string name)
@@ -68,7 +68,7 @@ llvm::Value *Program::codegen(IRContext &context)
     context.module->setDataLayout(targetMachine->createDataLayout());
     context.module->setTargetTriple(target_triple);
 
-    auto filename = "output.s";
+    auto filename = "primo_build/output.s";
     std::error_code error_code;
     llvm::raw_fd_ostream destination(filename, error_code, llvm::sys::fs::OF_None);
 
@@ -100,4 +100,4 @@ void Program::codegen()
     codegen(context);
 }
 
-} // namespace ast
+} // namespace primo::ast
