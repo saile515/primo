@@ -1,5 +1,7 @@
 #include "./identifier.hpp"
 
+#include "../log.hpp"
+
 namespace ast
 {
 
@@ -9,7 +11,7 @@ llvm::Value *Identifier::codegen(IRContext &context)
 
     if (!result.has_value())
     {
-        throw std::runtime_error("Unknown identifier: " + m_name);
+        error("Unknown identifier: '{}'", m_name);
     }
 
     return result.value();

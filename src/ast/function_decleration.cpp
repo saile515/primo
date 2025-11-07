@@ -1,4 +1,6 @@
 #include "./function_decleration.hpp"
+
+#include "../log.hpp"
 #include <llvm/IR/Verifier.h>
 
 namespace ast
@@ -60,7 +62,7 @@ llvm::Value *FunctionDeclaration::codegen(IRContext &context)
 
         output.flush();
 
-        throw std::runtime_error("Function verification failed: " + verify_error);
+        error("Function verification failed: " + verify_error);
     }
 
     return function;

@@ -1,11 +1,14 @@
 #include "./node.hpp"
 
+#include "../log.hpp"
+
 namespace ast
 {
 
 llvm::Value *Node::codegen(IRContext &context)
 {
-    throw "Error: Node::codegen should only be called through sub-classes.";
+    error("Node::codegen should only be called through sub-classes.");
+    return nullptr;
 }
 
 } // namespace ast
