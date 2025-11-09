@@ -1,5 +1,5 @@
 export declare func printf(input: String): Void;
 
 export func hello_world(): Void {
-	printf("Hello world");
+	printf("Hello world\n");
 };

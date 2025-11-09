@@ -2,5 +2,5 @@ import { hello_world, printf } from "./io.primo";
 
 func main(): Void {
 	hello_world();
-	printf("Hello world 2");
+	printf("Hello world 2\n");
 };
