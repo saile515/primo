@@ -1,9 +1,9 @@
-#include "./external_decleration.hpp"
+#include "./function_declaration.hpp"
 
 namespace primo::ast
 {
 
-llvm::Value *ExternalDeclaration::codegen(IRModuleContext &context)
+llvm::Value *FunctionDeclaration::codegen(IRModuleContext &context)
 {
     std::vector<llvm::Type *> parameter_types;
 

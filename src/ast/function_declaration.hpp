@@ -5,14 +5,14 @@
 namespace primo::ast
 {
 
-class ExternalDeclaration : public Statement
+class FunctionDeclaration : public Statement
 {
-  private:
+  protected:
     std::string m_name;
     std::vector<std::string> m_parameters;
 
   public:
-    ExternalDeclaration(std::string name, std::vector<std::string> parameters)
+    FunctionDeclaration(std::string name, std::vector<std::string> parameters)
         : m_name(std::move(name)), m_parameters(std::move(parameters))
     {
     }

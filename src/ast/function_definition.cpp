@@ -1,4 +1,4 @@
-#include "./function_decleration.hpp"
+#include "./function_definition.hpp"
 
 #include "../log.hpp"
 #include <llvm/IR/Verifier.h>
@@ -6,7 +6,7 @@
 namespace primo::ast
 {
 
-llvm::Value *FunctionDeclaration::codegen(IRModuleContext &context)
+llvm::Value *FunctionDefinition::codegen(IRModuleContext &context)
 {
     std::vector<llvm::Type *> parameter_types;
 

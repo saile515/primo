@@ -89,6 +89,16 @@ TokenList tokenize(std::istream &stream)
             continue;
         }
 
+        if (next == ':')
+        {
+            stream_parser.get();
+
+            token.type = TokenType::Colon;
+
+            result.push_back(token);
+            continue;
+        }
+
         if (bracket_lookup.contains(next))
         {
             TokenType type = bracket_lookup.at(stream_parser.get());

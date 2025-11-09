@@ -5,8 +5,8 @@
 #include "./ast/export_statement.hpp"
 #include "./ast/expression.hpp"
 #include "./ast/expression_statement.hpp"
-#include "./ast/external_decleration.hpp"
-#include "./ast/function_decleration.hpp"
+#include "./ast/function_declaration.hpp"
+#include "./ast/function_definition.hpp"
 #include "./ast/identifier.hpp"
 #include "./ast/import_statement.hpp"
 #include "./ast/string_literal.hpp"
@@ -54,7 +54,7 @@ std::unique_ptr<ExportStatement> parse_export_statement(TokenList &tokens)
     return std::make_unique<ExportStatement>(name, std::move(statement));
 }
 
-std::unique_ptr<FunctionDeclaration> parse_function_declaration(TokenList &tokens)
+std::unique_ptr<FunctionDefinition> parse_function_definition(TokenList &tokens)
 {
     std::string name = tokens.at(1)->value.value();
 
@@ -76,10 +76,10 @@ std::unique_ptr<FunctionDeclaration> parse_function_declaration(TokenList &token
 
     TokenList body_tokens(tokens.begin() + parameter_end + 2, tokens.begin() + body_end);
 
-    return std::make_unique<FunctionDeclaration>(name, parameters, parse_block(body_tokens));
+    return std::make_unique<FunctionDefinition>(name, parameters, parse_block(body_tokens));
 }
 
-std::unique_ptr<ExternalDeclaration> parse_external_declaration(TokenList &tokens)
+std::unique_ptr<FunctionDeclaration> parse_function_declaration(TokenList &tokens)
 {
     std::string name = tokens.at(2)->value.value();
 
@@ -96,7 +96,7 @@ std::unique_ptr<ExternalDeclaration> parse_external_declaration(TokenList &token
         parameters.push_back(token_list.at(0)->value.value());
     }
 
-    return std::make_unique<ExternalDeclaration>(name, parameters);
+    return std::make_unique<FunctionDeclaration>(name, parameters);
 }
 
 std::unique_ptr<CallExpression> parse_call_expression(TokenList &tokens)
@@ -155,12 +155,12 @@ std::unique_ptr<Statement> parse_statement(TokenList &tokens)
 
     if (tokens.at(0)->type == TokenType::KeywordFunc)
     {
-        return std::unique_ptr<Statement>(parse_function_declaration(tokens));
+        return std::unique_ptr<Statement>(parse_function_definition(tokens));
     }
 
     if (tokens.at(0)->type == TokenType::KeywordDeclare)
     {
-        return std::unique_ptr<Statement>(parse_external_declaration(tokens));
+        return std::unique_ptr<Statement>(parse_function_declaration(tokens));
     }
 
     return std::unique_ptr<Statement>(

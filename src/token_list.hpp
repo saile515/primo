@@ -26,6 +26,7 @@ enum TokenType
     BracketSquareClose,
     BracketChevronOpen,
     BracketChevronClose,
+    Colon,
     SemiColon,
     Comma,
 };

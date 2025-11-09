@@ -1,4 +1,4 @@
-declare func printf(input);
+declare func printf(input: string);
 
 export func hello_world() {
 	printf("Hello world");
