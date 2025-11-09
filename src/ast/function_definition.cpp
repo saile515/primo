@@ -8,28 +8,15 @@ namespace primo::ast
 
 llvm::Value *FunctionDefinition::codegen(IRModuleContext &context)
 {
-    std::vector<llvm::Type *> parameter_types;
-
-    parameter_types.reserve(m_parameters.size());
-
-    for (size_t i = 0; i < m_parameters.size(); i++)
-    {
-        parameter_types.push_back(llvm::PointerType::getUnqual(*context.llvm_context));
-    }
-
-    llvm::FunctionType *function_type = llvm::FunctionType::get(
-        llvm::Type::getVoidTy(*context.llvm_context), parameter_types, false);
-    llvm::Function *function = llvm::Function::Create(
-        function_type, llvm::Function::ExternalLinkage, m_name, context.module.get());
-
-    context.named_values.push(m_name, function);
+    llvm::Function *function =
+        llvm::dyn_cast<llvm::Function>(FunctionDeclaration::codegen(context));
 
     for (int i = 0; i < m_parameters.size(); i++)
     {
         auto argument = function->args().begin() + i;
-        argument->setName(m_parameters[i]);
+        argument->setName(m_parameters[i].name);
 
-        context.named_values.push(m_parameters[i], argument);
+        context.named_values.push(m_parameters[i].name, argument);
     }
 
     llvm::BasicBlock *body_block =
@@ -53,7 +40,7 @@ llvm::Value *FunctionDefinition::codegen(IRModuleContext &context)
 
     for (auto &parameter_name : m_parameters)
     {
-        context.named_values.pop(parameter_name);
+        context.named_values.pop(parameter_name.name);
     }
 
     if (invalid)

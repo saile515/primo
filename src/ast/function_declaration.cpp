@@ -1,7 +1,30 @@
 #include "./function_declaration.hpp"
 
+#include "../log.hpp"
+#include <llvm/IR/DerivedTypes.h>
+
 namespace primo::ast
 {
+
+llvm::Type *get_type(IRModuleContext &context, const std::string &name)
+{
+    llvm::Type *type;
+
+    if (name == "String")
+    {
+        type = llvm::PointerType::getUnqual(*context.llvm_context);
+    }
+    else if (name == "Void")
+    {
+        type = llvm::Type::getVoidTy(*context.llvm_context);
+    }
+    else
+    {
+        error("Unknown type '{}'.", name);
+    }
+
+    return type;
+}
 
 llvm::Value *FunctionDeclaration::codegen(IRModuleContext &context)
 {
@@ -9,13 +32,13 @@ llvm::Value *FunctionDeclaration::codegen(IRModuleContext &context)
 
     parameter_types.reserve(m_parameters.size());
 
-    for (size_t i = 0; i < m_parameters.size(); i++)
+    for (auto &parameter : m_parameters)
     {
-        parameter_types.push_back(llvm::PointerType::getUnqual(*context.llvm_context));
+        parameter_types.push_back(get_type(context, parameter.type));
     }
 
-    llvm::FunctionType *function_type = llvm::FunctionType::get(
-        llvm::Type::getVoidTy(*context.llvm_context), parameter_types, false);
+    llvm::FunctionType *function_type =
+        llvm::FunctionType::get(get_type(context, m_return_type), parameter_types, false);
     llvm::Function *function = llvm::Function::Create(
         function_type, llvm::Function::ExternalLinkage, m_name, context.module.get());
 

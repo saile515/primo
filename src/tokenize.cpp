@@ -31,7 +31,7 @@ TokenList tokenize(std::istream &stream)
 
         Token token;
 
-        if (std::islower(next))
+        if (std::isalpha(next))
         {
             std::string word = stream_parser.get_word();
 

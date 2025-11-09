@@ -12,9 +12,10 @@ class FunctionDefinition : public FunctionDeclaration
     std::unique_ptr<BlockStatement> m_body;
 
   public:
-    FunctionDefinition(std::string name, std::vector<std::string> parameters,
-                       std::unique_ptr<BlockStatement> body)
-        : FunctionDeclaration(std::move(name), std::move(parameters)), m_body(std::move(body))
+    FunctionDefinition(std::string name, std::vector<FunctionParameter> parameters,
+                       std::string return_type, std::unique_ptr<BlockStatement> body)
+        : FunctionDeclaration(std::move(name), std::move(parameters), std::move(return_type)),
+          m_body(std::move(body))
     {
     }
 

@@ -54,6 +54,21 @@ std::unique_ptr<ExportStatement> parse_export_statement(TokenList &tokens)
     return std::make_unique<ExportStatement>(name, std::move(statement));
 }
 
+std::vector<FunctionParameter> parse_function_parameters(TokenList &tokens)
+{
+    std::vector<FunctionParameter> result{};
+
+    for (auto &token_list : tokens.split(TokenType::Comma))
+    {
+        std::string name = token_list.at(0)->value.value();
+        std::string type = token_list.at(2)->value.value();
+
+        result.push_back(FunctionParameter{name = name, type = type});
+    }
+
+    return result;
+}
+
 std::unique_ptr<FunctionDefinition> parse_function_definition(TokenList &tokens)
 {
     std::string name = tokens.at(1)->value.value();
@@ -61,22 +76,19 @@ std::unique_ptr<FunctionDefinition> parse_function_definition(TokenList &tokens)
     int parameter_end =
         tokens.find_matching_token(2, TokenType::BracketRoundOpen, TokenType::BracketRoundClose);
 
-    std::vector<TokenList> parameter_tokens =
-        TokenList(tokens.begin() + 3, tokens.begin() + parameter_end).split(TokenType::Comma);
+    TokenList parameter_tokens = TokenList(tokens.begin() + 3, tokens.begin() + parameter_end);
 
-    std::vector<std::string> parameters{};
+    std::vector<FunctionParameter> parameters = parse_function_parameters(parameter_tokens);
 
-    for (auto &token_list : parameter_tokens)
-    {
-        parameters.push_back(token_list.at(0)->value.value());
-    }
+    std::string return_type = tokens.at(parameter_end + 2)->value.value();
 
-    int body_end = tokens.find_matching_token(parameter_end + 1, TokenType::BracketCurlyOpen,
+    int body_end = tokens.find_matching_token(parameter_end + 3, TokenType::BracketCurlyOpen,
                                               TokenType::BracketCurlyClose);
 
-    TokenList body_tokens(tokens.begin() + parameter_end + 2, tokens.begin() + body_end);
+    TokenList body_tokens(tokens.begin() + parameter_end + 4, tokens.begin() + body_end);
 
-    return std::make_unique<FunctionDefinition>(name, parameters, parse_block(body_tokens));
+    return std::make_unique<FunctionDefinition>(name, parameters, return_type,
+                                                parse_block(body_tokens));
 }
 
 std::unique_ptr<FunctionDeclaration> parse_function_declaration(TokenList &tokens)
@@ -86,17 +98,13 @@ std::unique_ptr<FunctionDeclaration> parse_function_declaration(TokenList &token
     int parameter_end =
         tokens.find_matching_token(3, TokenType::BracketRoundOpen, TokenType::BracketRoundClose);
 
-    std::vector<TokenList> parameter_tokens =
-        TokenList(tokens.begin() + 4, tokens.begin() + parameter_end).split(TokenType::Comma);
+    TokenList parameter_tokens = TokenList(tokens.begin() + 4, tokens.begin() + parameter_end);
 
-    std::vector<std::string> parameters{};
+    std::vector<FunctionParameter> parameters = parse_function_parameters(parameter_tokens);
 
-    for (auto &token_list : parameter_tokens)
-    {
-        parameters.push_back(token_list.at(0)->value.value());
-    }
+    std::string return_type = tokens.at(parameter_end + 2)->value.value();
 
-    return std::make_unique<FunctionDeclaration>(name, parameters);
+    return std::make_unique<FunctionDeclaration>(name, parameters, return_type);
 }
 
 std::unique_ptr<CallExpression> parse_call_expression(TokenList &tokens)

@@ -1,5 +1,5 @@
 import { hello_world } from "./io.primo";
 
-func main() {
+func main(): Void {
 	hello_world();
 };
