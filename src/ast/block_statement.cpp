@@ -3,7 +3,7 @@
 namespace primo::ast
 {
 
-llvm::Value *BlockStatement::codegen(IRContext &context)
+llvm::Value *BlockStatement::codegen(IRModuleContext &context)
 {
     llvm::Value *last = nullptr;
 

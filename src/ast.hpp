@@ -1,11 +1,11 @@
 #pragma once
 
-#include "./ast/program.hpp"
+#include "./ast/module.hpp"
 #include "token_list.hpp"
 
 namespace primo::ast
 {
 
-std::unique_ptr<Program> parse(TokenList &tokens);
+std::unique_ptr<Module> parse_module(TokenList &tokens, std::string path);
 
 }; // namespace primo::ast

@@ -18,7 +18,7 @@ class BlockStatement : public Statement
     {
     }
 
-    virtual llvm::Value *codegen(IRContext &context);
+    virtual llvm::Value *codegen(IRModuleContext &context);
 };
 
 } // namespace primo::ast

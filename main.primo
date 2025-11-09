@@ -1,0 +1,5 @@
+import { hello_world } from "./io.primo";
+
+func main() {
+	hello_world();
+};

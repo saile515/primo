@@ -15,7 +15,7 @@ class ExpressionStatement : public Statement
     ExpressionStatement(std::unique_ptr<Expression> expression)
         : m_expression(std::move(expression)) {};
 
-    virtual llvm::Value *codegen(IRContext &context);
+    virtual llvm::Value *codegen(IRModuleContext &context);
 };
 
 } // namespace primo::ast

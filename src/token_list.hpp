@@ -10,6 +10,8 @@ namespace primo
 enum TokenType
 {
     EndOfFile,
+    KeywordImport,
+    KeywordExport,
     KeywordFunc,
     Identifier,
     LiteralInt,

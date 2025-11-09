@@ -3,7 +3,7 @@
 namespace primo::ast
 {
 
-llvm::Value *ExpressionStatement::codegen(IRContext &context)
+llvm::Value *ExpressionStatement::codegen(IRModuleContext &context)
 {
     return m_expression->codegen(context);
 }

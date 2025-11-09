@@ -6,7 +6,7 @@
 namespace primo::ast
 {
 
-llvm::Value *FunctionDeclaration::codegen(IRContext &context)
+llvm::Value *FunctionDeclaration::codegen(IRModuleContext &context)
 {
     std::vector<llvm::Type *> parameter_types;
 

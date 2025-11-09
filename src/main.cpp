@@ -1,15 +1,12 @@
-#include <fstream>
-
-#include "ast.hpp"
-#include "tokenize.hpp"
+#include "./program.hpp"
+#include <filesystem>
 
 int main(int argc, char **argv)
 {
-    std::ifstream file_stream(argv[1]);
+    std::string entry_path = std::filesystem::canonical(std::filesystem::absolute(argv[1]));
 
-    primo::TokenList tokens = primo::tokenize(file_stream);
+    primo::Program program{};
+    program.initialize();
 
-    std::unique_ptr<primo::ast::Program> program = primo::ast::parse(tokens);
-
-    program->codegen();
+    program.compile_module(entry_path);
 }

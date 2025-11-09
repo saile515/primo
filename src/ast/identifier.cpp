@@ -5,7 +5,7 @@
 namespace primo::ast
 {
 
-llvm::Value *Identifier::codegen(IRContext &context)
+llvm::Value *Identifier::codegen(IRModuleContext &context)
 {
     auto result = context.named_values.top(m_name);
 

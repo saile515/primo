@@ -3,7 +3,7 @@
 namespace primo::ast
 {
 
-llvm::Value *StringLiteral::codegen(IRContext &context)
+llvm::Value *StringLiteral::codegen(IRModuleContext &context)
 {
     return context.builder->CreateGlobalString(m_value);
 }

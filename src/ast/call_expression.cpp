@@ -6,7 +6,7 @@
 namespace primo::ast
 {
 
-llvm::Value *CallExpression::codegen(IRContext &context)
+llvm::Value *CallExpression::codegen(IRModuleContext &context)
 {
     llvm::Value *callee_value = m_callee->codegen(context);
 

@@ -5,7 +5,7 @@
 namespace primo::ast
 {
 
-llvm::Value *Node::codegen(IRContext &context)
+llvm::Value *Node::codegen(IRModuleContext &context)
 {
     error("Node::codegen should only be called through sub-classes.");
     return nullptr;

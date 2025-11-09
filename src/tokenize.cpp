@@ -7,6 +7,8 @@ namespace primo
 {
 
 static const std::unordered_map<std::string, TokenType> keyword_lookup = {
+    {"import", TokenType::KeywordImport},
+    {"export", TokenType::KeywordExport},
     {"func", TokenType::KeywordFunc}};
 
 static const std::unordered_map<char, TokenType> bracket_lookup = {

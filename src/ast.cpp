@@ -2,10 +2,12 @@
 
 #include "./ast/block_statement.hpp"
 #include "./ast/call_expression.hpp"
+#include "./ast/export_statement.hpp"
 #include "./ast/expression.hpp"
 #include "./ast/expression_statement.hpp"
 #include "./ast/function_decleration.hpp"
 #include "./ast/identifier.hpp"
+#include "./ast/import_statement.hpp"
 #include "./ast/string_literal.hpp"
 #include <memory>
 
@@ -14,6 +16,42 @@ namespace primo::ast
 
 std::unique_ptr<BlockStatement> parse_block(TokenList &tokens);
 std::unique_ptr<Expression> parse_expression(TokenList &tokens);
+std::unique_ptr<Statement> parse_statement(TokenList &tokens);
+
+std::unique_ptr<ImportStatement> parse_import_statement(TokenList &tokens)
+{
+    int identifiers_end =
+        tokens.find_matching_token(1, TokenType::BracketCurlyOpen, TokenType::BracketCurlyClose);
+
+    std::vector<TokenList> identifier_lists =
+        TokenList(tokens.begin() + 2, tokens.begin() + identifiers_end).split(TokenType::Comma);
+
+    std::vector<std::string> identifiers{};
+
+    for (auto &list : identifier_lists)
+    {
+        if (list.size() == 0)
+        {
+            continue;
+        }
+
+        identifiers.push_back(list.at(0)->value.value());
+    }
+
+    std::string source = tokens.at(identifiers_end + 2)->value.value();
+
+    return std::make_unique<ImportStatement>(source, identifiers);
+}
+
+std::unique_ptr<ExportStatement> parse_export_statement(TokenList &tokens)
+{
+    TokenList statement_tokens(tokens.begin() + 1, tokens.end());
+    std::unique_ptr<Statement> statement = parse_statement(statement_tokens);
+
+    std::string name = statement_tokens.at(1)->value.value();
+
+    return std::make_unique<ExportStatement>(name, std::move(statement));
+}
 
 std::unique_ptr<FunctionDeclaration> parse_function_declaration(TokenList &tokens)
 {
@@ -84,6 +122,16 @@ std::unique_ptr<Expression> parse_expression(TokenList &tokens)
 
 std::unique_ptr<Statement> parse_statement(TokenList &tokens)
 {
+    if (tokens.at(0)->type == TokenType::KeywordImport)
+    {
+        return std::unique_ptr<Statement>(parse_import_statement(tokens));
+    }
+
+    if (tokens.at(0)->type == TokenType::KeywordExport)
+    {
+        return std::unique_ptr<Statement>(parse_export_statement(tokens));
+    }
+
     if (tokens.at(0)->type == TokenType::KeywordFunc)
     {
         return std::unique_ptr<Statement>(parse_function_declaration(tokens));
@@ -106,12 +154,12 @@ std::unique_ptr<BlockStatement> parse_block(TokenList &tokens)
     return std::make_unique<BlockStatement>(std::move(statements));
 }
 
-std::unique_ptr<Program> parse(TokenList &tokens)
+std::unique_ptr<Module> parse_module(TokenList &tokens, std::string path)
 {
-    TokenList program_block_tokens = TokenList(tokens.begin(), tokens.end() - 1);
-    std::unique_ptr<BlockStatement> program_block = parse_block(program_block_tokens);
+    TokenList module_block_tokens = TokenList(tokens.begin(), tokens.end() - 1);
+    std::unique_ptr<BlockStatement> module_block = parse_block(module_block_tokens);
 
-    return std::make_unique<Program>(std::move(program_block));
+    return std::make_unique<Module>(path, std::move(module_block));
 }
 
 }; // namespace primo::ast

@@ -15,7 +15,7 @@ class StringLiteral : public Expression
     {
     }
 
-    virtual llvm::Value *codegen(IRContext &context);
+    virtual llvm::Value *codegen(IRModuleContext &context);
 };
 
 } // namespace primo::ast
