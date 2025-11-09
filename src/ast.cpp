@@ -49,7 +49,16 @@ std::unique_ptr<ExportStatement> parse_export_statement(TokenList &tokens)
     TokenList statement_tokens(tokens.begin() + 1, tokens.end());
     std::unique_ptr<Statement> statement = parse_statement(statement_tokens);
 
-    std::string name = statement_tokens.at(1)->value.value();
+    std::string name;
+
+    if (statement_tokens.at(0)->type == TokenType::KeywordFunc)
+    {
+        name = statement_tokens.at(1)->value.value();
+    }
+    else if (statement_tokens.at(0)->type == TokenType::KeywordDeclare)
+    {
+        name = statement_tokens.at(2)->value.value();
+    }
 
     return std::make_unique<ExportStatement>(name, std::move(statement));
 }
@@ -195,5 +204,4 @@ std::unique_ptr<Module> parse_module(TokenList &tokens, std::string path)
 
     return std::make_unique<Module>(path, std::move(module_block));
 }
-
 }; // namespace primo::ast

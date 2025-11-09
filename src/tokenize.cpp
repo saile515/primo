@@ -1,5 +1,6 @@
 #include "tokenize.hpp"
 
+#include "./log.hpp"
 #include "stream_parser.hpp"
 #include <unordered_map>
 
@@ -79,6 +80,16 @@ TokenList tokenize(std::istream &stream)
             continue;
         }
 
+        if (next == ':')
+        {
+            stream_parser.get();
+
+            token.type = TokenType::Colon;
+
+            result.push_back(token);
+            continue;
+        }
+
         if (next == ';')
         {
             stream_parser.get();
@@ -89,11 +100,11 @@ TokenList tokenize(std::istream &stream)
             continue;
         }
 
-        if (next == ':')
+        if (next == ',')
         {
             stream_parser.get();
 
-            token.type = TokenType::Colon;
+            token.type = TokenType::Comma;
 
             result.push_back(token);
             continue;
@@ -113,7 +124,9 @@ TokenList tokenize(std::istream &stream)
             continue;
         }
 
-        throw std::format("Error: Unexpected character '{}'.", stream_parser.get());
+        char character = stream_parser.get();
+
+        error("Unexpected character '{}'.", character);
     }
 
     {

@@ -22,6 +22,11 @@ llvm::Value *ImportStatement::codegen(IRModuleContext &context)
     {
         llvm::Type *type = (*context.exported_values)[normalized_path][identifier];
 
+        if (type == nullptr)
+        {
+            error("Module '{}' does not have any export named '{}'.", normalized_path, identifier);
+        }
+
         llvm::FunctionType *function_type = llvm::dyn_cast<llvm::FunctionType>(type);
 
         if (function_type == nullptr)
