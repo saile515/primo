@@ -13,6 +13,7 @@ enum TokenType
     KeywordImport,
     KeywordExport,
     KeywordFunc,
+    KeywordDeclare,
     Identifier,
     LiteralInt,
     LiteralFloat,

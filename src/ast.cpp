@@ -5,6 +5,7 @@
 #include "./ast/export_statement.hpp"
 #include "./ast/expression.hpp"
 #include "./ast/expression_statement.hpp"
+#include "./ast/external_decleration.hpp"
 #include "./ast/function_decleration.hpp"
 #include "./ast/identifier.hpp"
 #include "./ast/import_statement.hpp"
@@ -78,6 +79,26 @@ std::unique_ptr<FunctionDeclaration> parse_function_declaration(TokenList &token
     return std::make_unique<FunctionDeclaration>(name, parameters, parse_block(body_tokens));
 }
 
+std::unique_ptr<ExternalDeclaration> parse_external_declaration(TokenList &tokens)
+{
+    std::string name = tokens.at(2)->value.value();
+
+    int parameter_end =
+        tokens.find_matching_token(3, TokenType::BracketRoundOpen, TokenType::BracketRoundClose);
+
+    std::vector<TokenList> parameter_tokens =
+        TokenList(tokens.begin() + 4, tokens.begin() + parameter_end).split(TokenType::Comma);
+
+    std::vector<std::string> parameters{};
+
+    for (auto &token_list : parameter_tokens)
+    {
+        parameters.push_back(token_list.at(0)->value.value());
+    }
+
+    return std::make_unique<ExternalDeclaration>(name, parameters);
+}
+
 std::unique_ptr<CallExpression> parse_call_expression(TokenList &tokens)
 {
     std::string name = tokens.at(0)->value.value();
@@ -135,6 +156,11 @@ std::unique_ptr<Statement> parse_statement(TokenList &tokens)
     if (tokens.at(0)->type == TokenType::KeywordFunc)
     {
         return std::unique_ptr<Statement>(parse_function_declaration(tokens));
+    }
+
+    if (tokens.at(0)->type == TokenType::KeywordDeclare)
+    {
+        return std::unique_ptr<Statement>(parse_external_declaration(tokens));
     }
 
     return std::unique_ptr<Statement>(

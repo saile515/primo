@@ -13,22 +13,11 @@
 #include "llvm/IR/Verifier.h"
 #include "llvm/Support/FileSystem.h"
 #include "llvm/Support/raw_ostream.h"
-#include "llvm/Target/TargetMachine.h"
 #include "llvm/TargetParser/Host.h"
 #include <filesystem>
 
 namespace primo::ast
 {
-
-void add_libc_function(IRModuleContext &context, std::string name)
-{
-    llvm::FunctionType *type = llvm::FunctionType::get(
-        context.builder->getInt32Ty(), {llvm::PointerType::getUnqual(*context.llvm_context)}, true);
-    llvm::Function *function =
-        llvm::Function::Create(type, llvm::Function::ExternalLinkage, name, context.module.get());
-
-    context.named_values.push(name, function);
-}
 
 llvm::Value *Module::codegen(IRModuleContext &context)
 {
@@ -40,8 +29,6 @@ llvm::Value *Module::codegen(IRModuleContext &context)
     context.module->setDataLayout(context.target->createDataLayout());
     context.module->setTargetTriple(target_triple);
     context.named_values = {};
-
-    add_libc_function(context, "printf");
 
     if (m_block)
     {

@@ -1,3 +1,5 @@
+declare func printf(input);
+
 export func hello_world() {
 	printf("Hello world");
 };
